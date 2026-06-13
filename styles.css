@@ -486,6 +486,11 @@ a {
   gap: 22px;
 }
 
+.workspace:has(.login-panel.hidden) {
+  grid-template-columns: minmax(0, 760px);
+  justify-content: center;
+}
+
 .panel {
   padding: 24px;
   background: var(--panel);
@@ -582,6 +587,13 @@ textarea {
   border-radius: 16px;
   font-size: 1.45rem;
   font-weight: 900;
+  overflow: hidden;
+}
+
+.avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .profile-card h3 {
@@ -592,6 +604,35 @@ textarea {
 .profile-card p {
   margin: 2px 0 8px;
   color: var(--muted);
+}
+
+.profile-extra {
+  display: grid;
+  gap: 12px;
+  margin: 20px 0;
+}
+
+.profile-extra h3 {
+  margin: 0;
+}
+
+.mini-list {
+  display: grid;
+  gap: 10px;
+}
+
+.mini-item {
+  display: grid;
+  gap: 4px;
+  padding: 14px;
+  background: #f8fbf9;
+  border: 1px solid #e3ece7;
+  border-radius: 8px;
+}
+
+.mini-item span {
+  color: var(--muted);
+  font-weight: 700;
 }
 
 .pill {
@@ -615,7 +656,9 @@ textarea {
 
 .course-grid,
 .shop-grid,
-.task-grid {
+.task-grid,
+.inventory-grid,
+.user-grid {
   display: grid;
   grid-template-columns: 1fr;
   gap: 16px;
@@ -623,7 +666,9 @@ textarea {
 
 .course-card,
 .shop-card,
-.task-card {
+.task-card,
+.inventory-card,
+.user-card {
   display: grid;
   gap: 14px;
   min-height: 260px;
@@ -632,6 +677,63 @@ textarea {
   border: 1px solid var(--line);
   border-radius: 8px;
   box-shadow: 0 12px 30px rgba(22, 38, 35, 0.08);
+}
+
+.user-card {
+  grid-template-columns: 96px minmax(0, 1fr);
+  min-height: 170px;
+  padding: 18px;
+  align-items: center;
+}
+
+.user-avatar {
+  display: grid;
+  place-items: center;
+  width: 76px;
+  height: 76px;
+  overflow: hidden;
+  color: #fff;
+  background: var(--teal);
+  border-radius: 16px;
+  font-weight: 900;
+}
+
+.user-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.user-body {
+  display: grid;
+  gap: 8px;
+}
+
+.user-body h3,
+.user-body p {
+  margin: 0;
+}
+
+.user-body small {
+  color: var(--muted);
+}
+
+.inventory-card {
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  min-height: 180px;
+  padding: 22px;
+}
+
+.inventory-card h3,
+.inventory-card p {
+  margin: 10px 0 0;
+}
+
+.inventory-card small {
+  display: block;
+  margin-top: 8px;
+  color: var(--muted);
 }
 
 .task-card {
@@ -684,6 +786,8 @@ textarea {
   background:
     radial-gradient(circle at 85% 20%, rgba(240, 182, 77, 0.48), transparent 28%),
     linear-gradient(135deg, var(--teal-2), var(--teal));
+  background-position: center;
+  background-size: cover;
 }
 
 .course-cover span {
@@ -869,8 +973,18 @@ textarea {
   .course-grid,
   .shop-grid,
   .task-grid,
+  .inventory-grid,
+  .user-grid,
   .course-card,
   .task-card {
+    grid-template-columns: 1fr;
+  }
+
+  .inventory-card {
+    grid-template-columns: 1fr;
+  }
+
+  .user-card {
     grid-template-columns: 1fr;
   }
 

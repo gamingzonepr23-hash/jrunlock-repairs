@@ -69,6 +69,10 @@
               <input id="courseLink" type="url" placeholder="https://...">
             </label>
             <label>
+              Foto del curso
+              <input id="courseImage" type="file" accept="image/*">
+            </label>
+            <label>
               Codigo para certificado
               <input id="courseCode" type="text" placeholder="Ej. CEL250" required>
             </label>
@@ -76,7 +80,9 @@
               Descripcion
               <textarea id="courseDescription" rows="4" placeholder="Que aprendera el alumno..." required></textarea>
             </label>
-            <button class="button primary full" type="submit">Subir curso</button>
+            <input id="courseEditIndex" type="hidden">
+            <button id="courseSubmitButton" class="button primary full" type="submit">Subir curso</button>
+            <button id="courseCancelEdit" class="button secondary full hidden" type="button">Cancelar edicion</button>
           </form>
           <div id="courseList" class="course-grid" aria-live="polite"></div>
         </div>
@@ -104,10 +110,65 @@
               Indicaciones
               <textarea id="taskDescription" rows="4" placeholder="Instrucciones para el alumno..." required></textarea>
             </label>
-            <button class="button primary full" type="submit">Subir tarea</button>
+            <input id="taskEditIndex" type="hidden">
+            <button id="taskSubmitButton" class="button primary full" type="submit">Subir tarea</button>
+            <button id="taskCancelEdit" class="button secondary full hidden" type="button">Cancelar edicion</button>
           </form>
           <div id="adminTaskList" class="task-grid" aria-live="polite"></div>
         </div>
+
+        <div class="section-heading">
+          <p class="eyebrow">Usuarios</p>
+          <h2>Manejar usuarios</h2>
+          <p>Edita nombre, correo, rol, telefono, direccion, foto y contrasena de los perfiles registrados.</p>
+        </div>
+        <div class="course-admin">
+          <form id="userForm" class="form panel">
+            <label>
+              Nombre
+              <input id="userName" type="text" placeholder="Nombre completo" required>
+            </label>
+            <label>
+              Correo
+              <input id="userEmail" type="email" placeholder="correo@ejemplo.com" required>
+            </label>
+            <label>
+              Rol
+              <select id="userRole">
+                <option value="Alumno">Alumno</option>
+                <option value="Instructor">Instructor</option>
+                <option value="Administrador">Administrador</option>
+              </select>
+            </label>
+            <label>
+              Telefono
+              <input id="userPhone" type="tel" placeholder="Telefono">
+            </label>
+            <label>
+              Direccion
+              <input id="userAddress" type="text" placeholder="Direccion">
+            </label>
+            <label>
+              Nueva contrasena
+              <input id="userPassword" type="password" placeholder="Dejar vacio para no cambiar">
+            </label>
+            <label>
+              Foto de perfil
+              <input id="userPhoto" type="file" accept="image/*">
+            </label>
+            <input id="userEditIndex" type="hidden">
+            <button id="userSubmitButton" class="button primary full" type="submit">Guardar usuario</button>
+            <button id="userCancelEdit" class="button secondary full hidden" type="button">Cancelar edicion</button>
+          </form>
+          <div id="userList" class="user-grid" aria-live="polite"></div>
+        </div>
+
+        <div class="section-heading">
+          <p class="eyebrow">Inventario</p>
+          <h2>Compras de cursos</h2>
+          <p>Registro local de alumnos que marcaron una compra desde la pagina de cursos.</p>
+        </div>
+        <div id="purchaseInventory" class="inventory-grid" aria-live="polite"></div>
       </section>
     </main>
 

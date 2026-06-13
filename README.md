@@ -5,7 +5,10 @@ Pagina web editable para cursos de reparacion de PC y celulares.
 ## Que incluye
 
 - Login simple con perfiles de alumno, instructor y administrador.
-- Panel separado `admin.html` para subir cursos.
+- Perfil editable con telefono, direccion, foto y cursos tomados.
+- Base local de usuarios con correo y contrasena.
+- Inventario local de compras de cursos para el administrador.
+- Panel separado `admin.html` para subir y editar cursos con foto, tareas, usuarios e inventario de compras.
 - Paginas individuales para inicio, aprendizaje, cursos, perfil y certificados.
 - Pagina `tareas.html` para que alumnos logueados vean documentos PDF, Word o Excel subidos por el administrador.
 - Tienda de cursos con compra por WhatsApp: `939-206-3234`.
@@ -25,7 +28,7 @@ Nota: GitHub Pages es gratis y estatico, por eso este codigo protege la interfaz
 
 - Cambia textos principales en `index.html`, `aprendizaje.html`, `cursos.html`, `acceso.html`, `tareas.html` y `certificados.html`.
 - Cambia colores, tamanos y diseno en `styles.css`.
-- Cambia cursos iniciales, precios, codigo admin y funcionamiento en `app.js`.
+- Cambia cursos iniciales, precios, codigo admin, base local, compras y funcionamiento en `app.js`.
 - Cambia el visual principal en `assets/repair-hero.svg`.
 
 ## Como abrir en tu computadora
@@ -46,4 +49,4 @@ Abre `index.html` con doble clic en tu navegador.
 
 ## Importante
 
-Esta version funciona sin servidor, ideal para GitHub Pages gratis. El login, cursos agregados, tareas y datos se guardan en el navegador usando `localStorage`; no es un sistema privado real con base de datos. Para vender con pago automatico, usuarios reales, tareas compartidas entre computadoras y certificados verificables, el siguiente paso seria conectarlo con un backend como Firebase, Supabase o WordPress.
+Esta version funciona sin servidor, ideal para GitHub Pages gratis. El login, usuarios, compras, cursos agregados, tareas y datos se guardan en el navegador usando `localStorage`; no es una base de datos privada real. Para usuarios reales entre varias computadoras, pagos automaticos, inventario compartido y certificados verificables, el siguiente paso seria conectarlo con Firebase, Supabase o WordPress.

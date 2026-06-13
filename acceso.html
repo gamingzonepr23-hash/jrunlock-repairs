@@ -47,6 +47,10 @@
               <input id="emailInput" type="email" placeholder="correo@ejemplo.com" required>
             </label>
             <label>
+              Contrasena
+              <input id="passwordInput" type="password" placeholder="Minimo 4 caracteres" minlength="4" required>
+            </label>
+            <label>
               Tipo de perfil
               <select id="roleInput">
                 <option value="Alumno">Alumno</option>
@@ -76,6 +80,25 @@
               <span id="profileRole" class="pill">Alumno</span>
             </div>
           </div>
+          <form id="profileDetailsForm" class="form hidden">
+            <label>
+              Telefono
+              <input id="profilePhoneInput" type="tel" placeholder="Ej. 939-206-3234">
+            </label>
+            <label>
+              Direccion
+              <input id="profileAddressInput" type="text" placeholder="Ciudad, calle o referencia">
+            </label>
+            <label>
+              Foto de perfil
+              <input id="profilePhotoInput" type="file" accept="image/*">
+            </label>
+            <button class="button primary full" type="submit">Guardar informacion</button>
+          </form>
+          <div id="profileCoursesPanel" class="profile-extra hidden">
+            <h3>Cursos que ha tomado</h3>
+            <div id="profileCoursesList" class="mini-list"></div>
+          </div>
           <button id="logoutButton" class="button secondary hidden" type="button">Cerrar sesion</button>
         </div>
       </section>
@@ -83,7 +106,7 @@
 
     <footer class="footer">
       <strong>JRUnlock&amp;Repairs</strong>
-      <span>Codigo admin: JR939</span>
+      <span>Base local de usuarios y compras.</span>
       <a href="admin.html">Panel admin</a>
     </footer>
 
