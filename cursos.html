@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Cursos de JRUnlock&Repairs.">
+    <title>Cursos | JRUnlock&amp;Repairs</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <header class="topbar">
+      <a class="brand" href="index.html" aria-label="JRUnlock&Repairs inicio">
+        <span class="brand-mark">JR</span>
+        <span>JRUnlock&amp;Repairs</span>
+      </a>
+      <nav class="nav" aria-label="Navegacion principal">
+        <a href="aprendizaje.html">Aprendizaje</a>
+        <a href="cursos.html">Cursos</a>
+        <a href="acceso.html">Perfil</a>
+        <a id="tasksNavLink" class="hidden" href="tareas.html">Tareas</a>
+        <a href="certificados.html">Certificados</a>
+        <a id="adminNavLink" class="hidden" href="admin.html">Admin</a>
+      </nav>
+      <a class="whatsapp" href="https://wa.me/19392063234" target="_blank" rel="noreferrer">WhatsApp</a>
+    </header>
+
+    <main>
+      <section class="page-hero">
+        <p class="eyebrow">Cursos</p>
+        <h1>Programa de cursos</h1>
+        <p>Entra a cada curso, registra tu compra y desbloquea sus documentos con el cupon de un solo uso entregado por el administrador.</p>
+      </section>
+
+      <section class="section">
+        <div id="courseList" class="course-grid" aria-live="polite"></div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <strong>JRUnlock&amp;Repairs</strong>
+      <span>Cursos desde $250 y mantenimiento de PC $500.</span>
+      <a href="https://wa.me/19392063234" target="_blank" rel="noreferrer">WhatsApp 939-206-3234</a>
+    </footer>
+
+    <script src="https://www.gstatic.com/firebasejs/12.14.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/12.14.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/12.14.0/firebase-storage-compat.js"></script>
+    <script src="firebase-config.js"></script>
+    <script src="firebase-database.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>

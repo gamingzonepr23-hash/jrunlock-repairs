@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Curso individual JRUnlock&Repairs.">
+    <title>Curso | JRUnlock&amp;Repairs</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <header class="topbar">
+      <a class="brand" href="index.html" aria-label="JRUnlock&Repairs inicio">
+        <span class="brand-mark">JR</span>
+        <span>JRUnlock&amp;Repairs</span>
+      </a>
+      <nav class="nav" aria-label="Navegacion principal">
+        <a href="aprendizaje.html">Aprendizaje</a>
+        <a href="cursos.html">Cursos</a>
+        <a href="acceso.html">Perfil</a>
+        <a id="tasksNavLink" class="hidden" href="tareas.html">Tareas</a>
+        <a href="certificados.html">Certificados</a>
+        <a id="adminNavLink" class="hidden" href="admin.html">Admin</a>
+      </nav>
+      <a class="whatsapp" href="https://wa.me/19392063234" target="_blank" rel="noreferrer">WhatsApp</a>
+    </header>
+
+    <main>
+      <section id="courseDetail" class="course-detail"></section>
+      <section class="section split">
+        <div class="panel">
+          <div class="section-heading compact">
+            <p class="eyebrow">Acceso del curso</p>
+            <h2>Desbloquear documentos</h2>
+          </div>
+          <div id="courseUnlockMessage" class="empty">Compra el curso y escribe el cupon de un solo uso entregado por el administrador para ver los documentos.</div>
+          <form id="courseUnlockForm" class="form">
+            <label>
+              Cupon del curso
+              <input id="courseUnlockCode" type="password" placeholder="Cupon del curso" required>
+            </label>
+            <button class="button primary" type="submit">Desbloquear curso</button>
+          </form>
+        </div>
+        <div>
+          <div class="section-heading left">
+            <p class="eyebrow">Documentos</p>
+            <h2>Trabajos del curso</h2>
+            <p>Solo aparecen despues de desbloquear este curso con un cupon valido.</p>
+          </div>
+          <div id="courseTaskList" class="task-grid"></div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <strong>JRUnlock&amp;Repairs</strong>
+      <span>Curso individual con documentos protegidos por cupon.</span>
+      <a href="cursos.html">Volver a cursos</a>
+    </footer>
+
+    <script src="https://www.gstatic.com/firebasejs/12.14.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/12.14.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/12.14.0/firebase-storage-compat.js"></script>
+    <script src="firebase-config.js"></script>
+    <script src="firebase-database.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>
