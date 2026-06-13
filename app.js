@@ -6,7 +6,8 @@ const storageKeys = {
   certificate: "jr_certificate",
   tasks: "jr_tasks",
   users: "jr_users",
-  purchases: "jr_purchases"
+  purchases: "jr_purchases",
+  unlockedCourses: "jr_unlocked_courses"
 };
 
 const starterCourses = [
@@ -41,6 +42,17 @@ const starterCourses = [
 
 const $ = (selector) => document.querySelector(selector);
 const page = document.body.dataset.page || (location.pathname.toLowerCase().includes("admin") ? "admin" : "home");
+
+function firebaseEnabled() {
+  return Boolean(window.JRFirebase && window.JRFirebase.isEnabled());
+}
+
+function saveRemoteCollection(collectionName, items, idField) {
+  if (!firebaseEnabled()) return;
+  window.JRFirebase.saveCollection(collectionName, items, idField).catch((error) => {
+    console.warn(`No se pudo sincronizar ${collectionName} con Firebase`, error);
+  });
+}
 
 function getCourses() {
   const saved = localStorage.getItem(storageKeys.courses);
@@ -82,6 +94,7 @@ function getCourses() {
 
 function saveCourses(courses) {
   localStorage.setItem(storageKeys.courses, JSON.stringify(courses));
+  saveRemoteCollection("courses", courses, "title");
 }
 
 function getProfile() {
@@ -100,6 +113,7 @@ function getUsers() {
 
 function saveUsers(users) {
   localStorage.setItem(storageKeys.users, JSON.stringify(users));
+  saveRemoteCollection("users", users, "email");
 }
 
 function getCurrentUser() {
@@ -132,6 +146,38 @@ function getPurchases() {
 
 function savePurchases(purchases) {
   localStorage.setItem(storageKeys.purchases, JSON.stringify(purchases));
+  saveRemoteCollection("purchases", purchases, "id");
+}
+
+function getUnlockedCourses() {
+  const saved = localStorage.getItem(storageKeys.unlockedCourses);
+  return saved ? JSON.parse(saved) : {};
+}
+
+function saveUnlockedCourses(unlocked) {
+  localStorage.setItem(storageKeys.unlockedCourses, JSON.stringify(unlocked));
+}
+
+function courseKey(course) {
+  return normalizeCode(course.title);
+}
+
+function isCourseUnlocked(course) {
+  const profile = getProfile();
+  if (!profile || !course) return false;
+  const unlocked = getUnlockedCourses();
+  return Boolean(unlocked[profile.email]?.includes(courseKey(course)));
+}
+
+function unlockCourse(course) {
+  const profile = getProfile();
+  if (!profile || !course) return;
+  const unlocked = getUnlockedCourses();
+  const key = courseKey(course);
+  const userCourses = unlocked[profile.email] || [];
+  if (!userCourses.includes(key)) userCourses.push(key);
+  unlocked[profile.email] = userCourses;
+  saveUnlockedCourses(unlocked);
 }
 
 function getTasks() {
@@ -141,6 +187,7 @@ function getTasks() {
 
 function saveTasks(tasks) {
   localStorage.setItem(storageKeys.tasks, JSON.stringify(tasks));
+  saveRemoteCollection("tasks", tasks, "id");
 }
 
 function initials(name) {
@@ -174,6 +221,7 @@ function renderProfile() {
   const loginPanel = $(".login-panel");
   const detailsForm = $("#profileDetailsForm");
   const coursesPanel = $("#profileCoursesPanel");
+  const profileSummary = $("#profileInfoSummary");
   const adminNav = $("#adminNavLink");
   const tasksNav = $("#tasksNavLink");
   const users = profile ? 1 : 0;
@@ -195,6 +243,7 @@ function renderProfile() {
     logout.classList.add("hidden");
     if (detailsForm) detailsForm.classList.add("hidden");
     if (coursesPanel) coursesPanel.classList.add("hidden");
+    if (profileSummary) profileSummary.classList.add("hidden");
     return;
   }
 
@@ -204,6 +253,7 @@ function renderProfile() {
   logout.classList.remove("hidden");
   if (detailsForm) detailsForm.classList.remove("hidden");
   if (coursesPanel) coursesPanel.classList.remove("hidden");
+  if (profileSummary) profileSummary.classList.remove("hidden");
   if (user && user.photo) {
     $("#profileInitials").innerHTML = `<img src="${user.photo}" alt="Foto de perfil de ${user.name}">`;
   } else {
@@ -214,6 +264,8 @@ function renderProfile() {
   $("#profileRole").textContent = profile.role;
   if ($("#profilePhoneInput")) $("#profilePhoneInput").value = user?.phone || "";
   if ($("#profileAddressInput")) $("#profileAddressInput").value = user?.address || "";
+  if ($("#profilePhoneText")) $("#profilePhoneText").textContent = user?.phone || "Sin telefono";
+  if ($("#profileAddressText")) $("#profileAddressText").textContent = user?.address || "Sin direccion";
   renderProfileCourses();
 }
 
@@ -238,14 +290,20 @@ function renderProfileCourses() {
   `).join("");
 }
 
-function createOrLoginUser({ name, email, password, role }) {
+async function createOrLoginUser({ name, email, password, role }) {
   const users = getUsers();
   const normalizedEmail = normalizeEmail(email);
   const passwordHash = encodePassword(password);
   const existing = users.find((user) => user.email === normalizedEmail);
 
   if (existing) {
-    if (existing.passwordHash !== passwordHash) {
+    if (firebaseEnabled()) {
+      try {
+        await window.JRFirebase.signIn(normalizedEmail, password);
+      } catch (error) {
+        return { ok: false, message: `Firebase no pudo iniciar sesion: ${error.message}` };
+      }
+    } else if (existing.passwordHash !== passwordHash) {
       return { ok: false, message: "Contrasena incorrecta para este correo." };
     }
     const profile = {
@@ -257,12 +315,20 @@ function createOrLoginUser({ name, email, password, role }) {
     return { ok: true, profile, created: false };
   }
 
+  if (firebaseEnabled()) {
+    try {
+      await window.JRFirebase.signUp(normalizedEmail, password);
+    } catch (error) {
+      return { ok: false, message: `Firebase no pudo crear la cuenta: ${error.message}` };
+    }
+  }
+
   const user = {
     id: `USR-${Date.now()}`,
     name,
     email: normalizedEmail,
     role,
-    passwordHash,
+    passwordHash: firebaseEnabled() ? "" : passwordHash,
     phone: "",
     address: "",
     photo: "",
@@ -282,6 +348,52 @@ function createOrLoginUser({ name, email, password, role }) {
   };
   localStorage.setItem(storageKeys.profile, JSON.stringify(profile));
   return { ok: true, profile, created: true };
+}
+
+async function loginExistingUser({ email, password }) {
+  const normalizedEmail = normalizeEmail(email);
+  const passwordHash = encodePassword(password);
+  let user = getUsers().find((item) => item.email === normalizedEmail);
+  if (firebaseEnabled()) {
+    try {
+      await window.JRFirebase.signIn(normalizedEmail, password);
+    } catch (error) {
+      return { ok: false, message: `Firebase no pudo iniciar sesion: ${error.message}` };
+    }
+    if (!user) {
+      const users = getUsers();
+      user = {
+        id: `USR-${Date.now()}`,
+        name: normalizedEmail.split("@")[0],
+        email: normalizedEmail,
+        role: "Alumno",
+        passwordHash: "",
+        phone: "",
+        address: "",
+        photo: "",
+        createdAt: new Date().toLocaleDateString("es-BO", {
+          year: "numeric",
+          month: "long",
+          day: "numeric"
+        })
+      };
+      users.push(user);
+      saveUsers(users);
+    }
+  }
+  if (!user) {
+    return { ok: false, message: "No existe una cuenta con ese correo." };
+  }
+  if (!firebaseEnabled() && user.passwordHash !== passwordHash) {
+    return { ok: false, message: "Contrasena incorrecta." };
+  }
+  const profile = {
+    name: user.name,
+    email: user.email,
+    role: user.role
+  };
+  setProfile(profile);
+  return { ok: true, profile };
 }
 
 function registerPurchase(course) {
@@ -417,6 +529,7 @@ function taskFileType(filename) {
 }
 
 function taskCard(task, index, options = {}) {
+  const fileHref = task.fileUrl || task.dataUrl;
   const article = document.createElement("article");
   article.className = "task-card";
   article.innerHTML = `
@@ -427,8 +540,8 @@ function taskCard(task, index, options = {}) {
       <p>${task.description}</p>
       <small>${task.filename} - ${task.createdAt}</small>
       <div class="card-actions">
-        <a class="button primary" href="${task.dataUrl}" download="${task.filename}">Descargar</a>
-        <a class="button secondary" href="${task.dataUrl}" target="_blank" rel="noreferrer">Abrir</a>
+        <a class="button primary" href="${fileHref}" download="${task.filename}">Descargar</a>
+        <a class="button secondary" href="${fileHref}" target="_blank" rel="noreferrer">Abrir</a>
         ${options.admin ? `<button class="button primary" type="button" data-edit-task="${index}">Editar</button><button class="button secondary" type="button" data-delete-task="${index}">Eliminar</button>` : ""}
       </div>
     </div>
@@ -442,7 +555,13 @@ function renderTasks() {
   const content = $("#tasksContent");
   const list = $("#taskList");
   const adminList = $("#adminTaskList");
+  const courses = getCourses();
   const tasks = getTasks();
+  const unlockedKeys = profile ? (getUnlockedCourses()[profile.email] || []) : [];
+  const visibleTasks = tasks.filter((task) => {
+    const course = courses.find((item) => item.title === task.course);
+    return course && unlockedKeys.includes(courseKey(course));
+  });
 
   if (locked && content) {
     locked.classList.toggle("hidden", Boolean(profile));
@@ -452,10 +571,10 @@ function renderTasks() {
   if (list) {
     list.innerHTML = "";
     if (!profile) return;
-    if (!tasks.length) {
-      list.innerHTML = `<div class="empty">Todavia no hay tareas subidas por el administrador.</div>`;
+    if (!visibleTasks.length) {
+      list.innerHTML = `<div class="empty">Todavia no tienes documentos desbloqueados. Entra a un curso comprado e ingresa su codigo.</div>`;
     } else {
-      tasks.forEach((task, index) => list.appendChild(taskCard(task, index)));
+      visibleTasks.forEach((task, index) => list.appendChild(taskCard(task, index)));
     }
   }
 
@@ -466,6 +585,51 @@ function renderTasks() {
     } else {
       tasks.forEach((task, index) => adminList.appendChild(taskCard(task, index, { admin: true })));
     }
+  }
+}
+
+function renderCourseTasks() {
+  const list = $("#courseTaskList");
+  if (!list) return;
+  const courses = getCourses();
+  const course = courses[getCurrentCourseIndex()];
+  if (!course) {
+    list.innerHTML = `<div class="empty">Curso no encontrado.</div>`;
+    return;
+  }
+  if (!getProfile()) {
+    list.innerHTML = `<div class="empty">Primero entra con tu perfil para ver documentos.</div>`;
+    return;
+  }
+  if (!isCourseUnlocked(course)) {
+    list.innerHTML = `<div class="empty">Ingresa el codigo del curso para ver sus documentos.</div>`;
+    return;
+  }
+  const tasks = getTasks().filter((task) => task.course === course.title);
+  if (!tasks.length) {
+    list.innerHTML = `<div class="empty">Este curso todavia no tiene documentos subidos.</div>`;
+    return;
+  }
+  list.innerHTML = "";
+  tasks.forEach((task, index) => list.appendChild(taskCard(task, index)));
+}
+
+function renderCourseUnlockState() {
+  const message = $("#courseUnlockMessage");
+  const form = $("#courseUnlockForm");
+  if (!message || !form) return;
+  const course = getCourses()[getCurrentCourseIndex()];
+  if (!course) return;
+  if (!getProfile()) {
+    message.textContent = "Primero entra con tu perfil para desbloquear documentos.";
+    return;
+  }
+  if (isCourseUnlocked(course)) {
+    message.textContent = "Curso desbloqueado. Ya puedes ver y descargar sus documentos.";
+    form.classList.add("hidden");
+  } else {
+    message.textContent = "Compra el curso y escribe el codigo entregado por el administrador para ver los documentos.";
+    form.classList.remove("hidden");
   }
 }
 
@@ -525,6 +689,7 @@ function courseCard(course, index, options = {}) {
       <h3>${course.title}</h3>
       <p>${course.description}</p>
       <div class="card-actions">
+        <a class="button primary" href="curso.html?id=${index}">Ver curso</a>
         <a class="button secondary" href="${whatsappLink(course)}" target="_blank" rel="noreferrer">Consultar</a>
         ${options.admin ? adminButtons : studentButtons}
       </div>
@@ -559,6 +724,52 @@ function renderCourses() {
     if (list) list.appendChild(courseCard(course, index, { admin: page === "admin" }));
     if (shop) shop.appendChild(shopCard(course));
   });
+}
+
+function getCurrentCourseIndex() {
+  const params = new URLSearchParams(window.location.search);
+  const id = Number(params.get("id"));
+  return Number.isInteger(id) && id >= 0 ? id : 0;
+}
+
+function renderCourseDetail() {
+  const detail = $("#courseDetail");
+  if (!detail) return;
+  const courses = getCourses();
+  const index = getCurrentCourseIndex();
+  const course = courses[index];
+  if (!course) {
+    detail.innerHTML = `
+      <section class="page-hero">
+        <p class="eyebrow">Curso no encontrado</p>
+        <h1>Este curso no existe</h1>
+        <p>Vuelve a la lista de cursos para seleccionar uno disponible.</p>
+        <a class="button primary" href="cursos.html">Ver cursos</a>
+      </section>
+    `;
+    return;
+  }
+  document.title = `${course.title} | JRUnlock&Repairs`;
+  detail.innerHTML = `
+    <section class="course-page-hero">
+      <div class="course-page-cover"${course.image ? ` style="background-image: linear-gradient(rgba(15, 64, 59, 0.38), rgba(15, 64, 59, 0.55)), url('${course.image}');"` : ""}>
+        <span>${course.category}</span>
+      </div>
+      <div class="course-page-body">
+        <p class="eyebrow">Curso</p>
+        <h1>${course.title}</h1>
+        <p>${course.description}</p>
+        <div class="card-meta">
+          <span class="pill">${course.price}</span>
+          <span class="pill">${isCourseUnlocked(course) ? "Documentos desbloqueados" : "Requiere codigo"}</span>
+        </div>
+        <div class="hero-actions">
+          <button class="button primary" type="button" data-buy-current="${index}">Registrar compra</button>
+          <a class="button secondary" href="${whatsappLink(course)}" target="_blank" rel="noreferrer">Consultar por WhatsApp</a>
+        </div>
+      </div>
+    </section>
+  `;
 }
 
 function readFileAsDataUrl(file) {
@@ -670,22 +881,36 @@ function renderAdminAccess() {
 }
 
 function bindHomeEvents() {
-  if (!$("#loginForm")) return;
+  if ($("#signInForm")) $("#signInForm").addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const result = await loginExistingUser({
+      email: $("#signInEmail").value,
+      password: $("#signInPassword").value
+    });
+    if (!result.ok) {
+      alert(result.message);
+      return;
+    }
+    renderProfile();
+    renderAdminAccess();
+    renderTasks();
+    event.target.reset();
+  });
 
-  $("#roleInput").addEventListener("change", () => {
+  if ($("#roleInput")) $("#roleInput").addEventListener("change", () => {
     const isAdmin = $("#roleInput").value === "Administrador";
     $("#adminCodeGroup").classList.toggle("hidden", !isAdmin);
     $("#adminCodeInput").required = isAdmin;
   });
 
-  $("#loginForm").addEventListener("submit", (event) => {
+  if ($("#loginForm")) $("#loginForm").addEventListener("submit", async (event) => {
     event.preventDefault();
     const role = $("#roleInput").value;
     if (role === "Administrador" && $("#adminCodeInput").value !== adminAccessCode) {
       alert("Codigo de administrador incorrecto.");
       return;
     }
-    const result = createOrLoginUser({
+    const result = await createOrLoginUser({
       name: $("#nameInput").value.trim(),
       email: $("#emailInput").value.trim(),
       password: $("#passwordInput").value,
@@ -701,7 +926,10 @@ function bindHomeEvents() {
     event.target.reset();
   });
 
-  $("#logoutButton").addEventListener("click", () => {
+  if ($("#logoutButton")) $("#logoutButton").addEventListener("click", () => {
+    if (firebaseEnabled()) {
+      window.JRFirebase.signOut().catch((error) => console.warn("No se pudo cerrar sesion en Firebase", error));
+    }
     localStorage.removeItem(storageKeys.profile);
     renderProfile();
     renderAdminAccess();
@@ -747,6 +975,35 @@ function bindPrintEvents() {
 }
 
 function bindCourseEvents() {
+  if ($("#courseDetail")) $("#courseDetail").addEventListener("click", (event) => {
+    const buyButton = event.target.closest("[data-buy-current]");
+    if (!buyButton) return;
+    const course = getCourses()[Number(buyButton.dataset.buyCurrent)];
+    registerPurchase(course);
+  });
+
+  if ($("#courseUnlockForm")) $("#courseUnlockForm").addEventListener("submit", (event) => {
+    event.preventDefault();
+    const profile = getProfile();
+    if (!profile) {
+      alert("Primero entra con tu perfil para desbloquear documentos.");
+      window.location.href = "acceso.html";
+      return;
+    }
+    const course = getCourses()[getCurrentCourseIndex()];
+    const code = $("#courseUnlockCode").value;
+    if (!validateCourseCode(course, code)) {
+      alert("Codigo incorrecto. Revisa el codigo entregado por el administrador.");
+      return;
+    }
+    unlockCourse(course);
+    fillCertificate(profile.name, course.title);
+    $("#courseUnlockCode").value = "";
+    renderCourseUnlockState();
+    renderCourseTasks();
+    renderTasks();
+  });
+
   if (!$("#courseList") || page === "admin") return;
 
   $("#courseList").addEventListener("click", (event) => {
@@ -867,14 +1124,19 @@ function bindAdminEvents() {
     const currentTask = editIndex !== "" ? tasks[Number(editIndex)] : null;
     const file = $("#taskFile").files[0];
     if (!file && !currentTask) return;
-    const dataUrl = await readFileAsDataUrl(file);
+    const dataUrl = firebaseEnabled() ? undefined : await readFileAsDataUrl(file);
+    const fileUrl = firebaseEnabled() && file
+      ? await window.JRFirebase.uploadFile(`tasks/${Date.now()}-${file.name}`, file)
+      : undefined;
     const taskData = {
+      id: currentTask?.id || `TSK-${Date.now()}`,
       title: $("#taskTitle").value.trim(),
       course: $("#taskCourse").value,
       description: $("#taskDescription").value.trim(),
       filename: file ? file.name : currentTask.filename,
       type: file ? file.type : currentTask.type,
-      dataUrl: dataUrl !== undefined ? dataUrl : currentTask.dataUrl,
+      dataUrl: dataUrl !== undefined ? dataUrl : currentTask?.dataUrl || "",
+      fileUrl: fileUrl !== undefined ? fileUrl : currentTask?.fileUrl || "",
       createdAt: currentTask?.createdAt || new Date().toLocaleDateString("es-BO", {
         year: "numeric",
         month: "long",
@@ -935,7 +1197,7 @@ function bindAdminEvents() {
       name: $("#userName").value.trim(),
       email,
       role: $("#userRole").value,
-      passwordHash: password ? encodePassword(password) : currentUser?.passwordHash || encodePassword("1234"),
+      passwordHash: firebaseEnabled() ? "" : (password ? encodePassword(password) : currentUser?.passwordHash || encodePassword("1234")),
       phone: $("#userPhone").value.trim(),
       address: $("#userAddress").value.trim(),
       photo: photo !== undefined ? photo : currentUser?.photo || "",
@@ -1013,18 +1275,48 @@ if ($("#certDate")) {
   });
 }
 
-bindHomeEvents();
-bindCourseEvents();
-bindPrintEvents();
-bindCertificateCodeEvents();
-bindAdminEvents();
-renderProfile();
-renderAdminAccess();
-renderCertificate();
-renderCertificateCourseOptions();
-renderTaskCourseOptions();
-renderCourses();
-renderTasks();
-renderPurchases();
-renderProfileCourses();
-renderUsers();
+async function loadRemoteData() {
+  if (!firebaseEnabled()) return;
+  try {
+    const [remoteUsers, remoteCourses, remotePurchases, remoteTasks] = await Promise.all([
+      window.JRFirebase.loadCollection("users"),
+      window.JRFirebase.loadCollection("courses"),
+      window.JRFirebase.loadCollection("purchases"),
+      window.JRFirebase.loadCollection("tasks")
+    ]);
+    if (remoteUsers.length) localStorage.setItem(storageKeys.users, JSON.stringify(remoteUsers));
+    if (remoteCourses.length) localStorage.setItem(storageKeys.courses, JSON.stringify(remoteCourses));
+    if (remotePurchases.length) localStorage.setItem(storageKeys.purchases, JSON.stringify(remotePurchases));
+    if (remoteTasks.length) localStorage.setItem(storageKeys.tasks, JSON.stringify(remoteTasks));
+  } catch (error) {
+    console.warn("No se pudo cargar la data de Firebase. Usando base local.", error);
+  }
+}
+
+function renderApp() {
+  renderProfile();
+  renderAdminAccess();
+  renderCertificate();
+  renderCertificateCourseOptions();
+  renderTaskCourseOptions();
+  renderCourseDetail();
+  renderCourseUnlockState();
+  renderCourseTasks();
+  renderCourses();
+  renderTasks();
+  renderPurchases();
+  renderProfileCourses();
+  renderUsers();
+}
+
+async function bootApp() {
+  await loadRemoteData();
+  bindHomeEvents();
+  bindCourseEvents();
+  bindPrintEvents();
+  bindCertificateCodeEvents();
+  bindAdminEvents();
+  renderApp();
+}
+
+bootApp();

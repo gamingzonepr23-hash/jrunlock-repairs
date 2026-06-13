@@ -3,8 +3,8 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="Cursos de JRUnlock&Repairs.">
-    <title>Cursos | JRUnlock&amp;Repairs</title>
+    <meta name="description" content="Curso individual JRUnlock&Repairs.">
+    <title>Curso | JRUnlock&amp;Repairs</title>
     <link rel="stylesheet" href="styles.css">
   </head>
   <body>
@@ -25,21 +25,37 @@
     </header>
 
     <main>
-      <section class="page-hero">
-        <p class="eyebrow">Cursos</p>
-        <h1>Programa de cursos</h1>
-        <p>Entra a cada curso, registra tu compra y desbloquea sus documentos con el codigo entregado por el administrador.</p>
-      </section>
-
-      <section class="section">
-        <div id="courseList" class="course-grid" aria-live="polite"></div>
+      <section id="courseDetail" class="course-detail"></section>
+      <section class="section split">
+        <div class="panel">
+          <div class="section-heading compact">
+            <p class="eyebrow">Acceso del curso</p>
+            <h2>Desbloquear documentos</h2>
+          </div>
+          <div id="courseUnlockMessage" class="empty">Compra el curso y escribe el codigo entregado por el administrador para ver los documentos.</div>
+          <form id="courseUnlockForm" class="form">
+            <label>
+              Codigo del curso
+              <input id="courseUnlockCode" type="password" placeholder="Codigo del curso" required>
+            </label>
+            <button class="button primary" type="submit">Desbloquear curso</button>
+          </form>
+        </div>
+        <div>
+          <div class="section-heading left">
+            <p class="eyebrow">Documentos</p>
+            <h2>Trabajos del curso</h2>
+            <p>Solo aparecen despues de desbloquear este curso con su codigo.</p>
+          </div>
+          <div id="courseTaskList" class="task-grid"></div>
+        </div>
       </section>
     </main>
 
     <footer class="footer">
       <strong>JRUnlock&amp;Repairs</strong>
-      <span>Cursos desde $250 y mantenimiento de PC $500.</span>
-      <a href="https://wa.me/19392063234" target="_blank" rel="noreferrer">WhatsApp 939-206-3234</a>
+      <span>Curso individual con documentos protegidos por codigo.</span>
+      <a href="cursos.html">Volver a cursos</a>
     </footer>
 
     <script src="https://www.gstatic.com/firebasejs/12.14.0/firebase-app-compat.js"></script>

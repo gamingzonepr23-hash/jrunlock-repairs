@@ -32,10 +32,28 @@
       </section>
 
       <section class="workspace">
-        <div class="panel login-panel">
+        <div class="login-panel access-grid">
+          <div class="panel">
+            <div class="section-heading compact">
+              <p class="eyebrow">Ya tengo cuenta</p>
+              <h2>Iniciar sesion</h2>
+            </div>
+            <form id="signInForm" class="form">
+              <label>
+                Correo
+                <input id="signInEmail" type="email" placeholder="correo@ejemplo.com" required>
+              </label>
+              <label>
+                Contrasena
+                <input id="signInPassword" type="password" placeholder="Tu contrasena" required>
+              </label>
+              <button class="button primary full" type="submit">Entrar</button>
+            </form>
+          </div>
+          <div class="panel">
           <div class="section-heading compact">
-            <p class="eyebrow">Entrada</p>
-            <h2>Crear perfil / entrar</h2>
+            <p class="eyebrow">Nuevo usuario</p>
+            <h2>Crear cuenta</h2>
           </div>
           <form id="loginForm" class="form">
             <label>
@@ -62,8 +80,9 @@
               Codigo de administrador
               <input id="adminCodeInput" type="password" placeholder="Codigo privado">
             </label>
-            <button class="button primary full" type="submit">Crear perfil / entrar</button>
+            <button class="button primary full" type="submit">Crear cuenta</button>
           </form>
+          </div>
         </div>
 
         <div class="panel profile-panel" id="perfil">
@@ -78,6 +97,16 @@
               <h3 id="profileName">Nombre</h3>
               <p id="profileEmail">correo@ejemplo.com</p>
               <span id="profileRole" class="pill">Alumno</span>
+            </div>
+          </div>
+          <div id="profileInfoSummary" class="profile-summary hidden">
+            <div>
+              <span>Telefono</span>
+              <strong id="profilePhoneText">Sin telefono</strong>
+            </div>
+            <div>
+              <span>Direccion</span>
+              <strong id="profileAddressText">Sin direccion</strong>
             </div>
           </div>
           <form id="profileDetailsForm" class="form hidden">
@@ -110,6 +139,12 @@
       <a href="admin.html">Panel admin</a>
     </footer>
 
+    <script src="https://www.gstatic.com/firebasejs/12.14.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/12.14.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/12.14.0/firebase-storage-compat.js"></script>
+    <script src="firebase-config.js"></script>
+    <script src="firebase-database.js"></script>
     <script src="app.js"></script>
   </body>
 </html>
