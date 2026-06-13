@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Panel de administrador JRUnlock&Repairs para subir cursos.">
+    <title>Admin | JRUnlock&amp;Repairs</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <header class="topbar">
+      <a class="brand" href="index.html" aria-label="JRUnlock&Repairs inicio">
+        <span class="brand-mark">JR</span>
+        <span>JRUnlock&amp;Repairs</span>
+      </a>
+      <nav class="nav" aria-label="Navegacion de administrador">
+        <a href="index.html">Inicio</a>
+        <a href="cursos.html">Cursos</a>
+        <a href="acceso.html">Perfil</a>
+        <a id="tasksNavLink" class="hidden" href="tareas.html">Tareas</a>
+        <a href="#admin">Subir cursos</a>
+      </nav>
+      <a class="whatsapp" href="https://wa.me/19392063234" target="_blank" rel="noreferrer">WhatsApp</a>
+    </header>
+
+    <main>
+      <section class="admin-hero" id="admin">
+        <div class="section-heading left">
+          <p class="eyebrow">Administrador</p>
+          <h1>Panel para subir cursos</h1>
+        <p>Solo entra aqui despues de iniciar sesion como Administrador en la pagina de perfil.</p>
+        </div>
+      </section>
+
+      <section id="adminLocked" class="section panel access-panel hidden">
+        <p class="eyebrow">Acceso restringido</p>
+        <h2>Necesitas perfil Administrador</h2>
+        <p>Vuelve a la pagina de perfil, crea o entra con un perfil de tipo Administrador, y luego regresa a este panel.</p>
+        <a class="button primary" href="acceso.html">Ir al login</a>
+      </section>
+
+      <section id="adminContent" class="section hidden">
+        <div class="section-heading">
+          <p class="eyebrow">Cursos</p>
+          <h2>Subir y administrar cursos</h2>
+          <p>Los cursos guardados aqui aparecen en la pagina principal y en la tienda.</p>
+        </div>
+        <div class="course-admin">
+          <form id="courseForm" class="form panel">
+            <label>
+              Titulo del curso
+              <input id="courseTitle" type="text" placeholder="Reparacion de celulares desde cero" required>
+            </label>
+            <label>
+              Categoria
+              <select id="courseCategory">
+                <option>Celulares</option>
+                <option>Computadoras PC</option>
+                <option>Unlock y software</option>
+                <option>Microsoldadura</option>
+              </select>
+            </label>
+            <label>
+              Precio
+              <input id="coursePrice" type="text" placeholder="$250 / $500" required>
+            </label>
+            <label>
+              Link del curso o video
+              <input id="courseLink" type="url" placeholder="https://...">
+            </label>
+            <label>
+              Foto del curso
+              <input id="courseImage" type="file" accept="image/*">
+            </label>
+            <label>
+              Codigo para certificado
+              <input id="courseCode" type="text" placeholder="Ej. CEL250" required>
+            </label>
+            <label>
+              Descripcion
+              <textarea id="courseDescription" rows="4" placeholder="Que aprendera el alumno..." required></textarea>
+            </label>
+            <input id="courseEditIndex" type="hidden">
+            <button id="courseSubmitButton" class="button primary full" type="submit">Subir curso</button>
+            <button id="courseCancelEdit" class="button secondary full hidden" type="button">Cancelar edicion</button>
+          </form>
+          <div id="courseList" class="course-grid" aria-live="polite"></div>
+        </div>
+
+        <div class="section-heading">
+          <p class="eyebrow">Tareas</p>
+          <h2>Subir documentos para alumnos</h2>
+          <p>Sube archivos PDF, Word o Excel para que aparezcan en la pagina Tareas cuando el usuario entre con su perfil.</p>
+        </div>
+        <div class="course-admin">
+          <form id="taskForm" class="form panel">
+            <label>
+              Titulo de la tarea
+              <input id="taskTitle" type="text" placeholder="Practica de diagnostico" required>
+            </label>
+            <label>
+              Curso relacionado
+              <select id="taskCourse"></select>
+            </label>
+            <label>
+              Archivo PDF, Word o Excel
+              <input id="taskFile" type="file" accept=".pdf,.doc,.docx,.xls,.xlsx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" required>
+            </label>
+            <label>
+              Indicaciones
+              <textarea id="taskDescription" rows="4" placeholder="Instrucciones para el alumno..." required></textarea>
+            </label>
+            <input id="taskEditIndex" type="hidden">
+            <button id="taskSubmitButton" class="button primary full" type="submit">Subir tarea</button>
+            <button id="taskCancelEdit" class="button secondary full hidden" type="button">Cancelar edicion</button>
+          </form>
+          <div id="adminTaskList" class="task-grid" aria-live="polite"></div>
+        </div>
+
+        <div class="section-heading">
+          <p class="eyebrow">Usuarios</p>
+          <h2>Manejar usuarios</h2>
+          <p>Edita nombre, correo, rol, telefono, direccion, foto y contrasena de los perfiles registrados.</p>
+        </div>
+        <div class="course-admin">
+          <form id="userForm" class="form panel">
+            <label>
+              Nombre
+              <input id="userName" type="text" placeholder="Nombre completo" required>
+            </label>
+            <label>
+              Correo
+              <input id="userEmail" type="email" placeholder="correo@ejemplo.com" required>
+            </label>
+            <label>
+              Rol
+              <select id="userRole">
+                <option value="Alumno">Alumno</option>
+                <option value="Instructor">Instructor</option>
+                <option value="Administrador">Administrador</option>
+              </select>
+            </label>
+            <label>
+              Telefono
+              <input id="userPhone" type="tel" placeholder="Telefono">
+            </label>
+            <label>
+              Direccion
+              <input id="userAddress" type="text" placeholder="Direccion">
+            </label>
+            <label>
+              Nueva contrasena
+              <input id="userPassword" type="password" placeholder="Dejar vacio para no cambiar">
+            </label>
+            <label>
+              Foto de perfil
+              <input id="userPhoto" type="file" accept="image/*">
+            </label>
+            <input id="userEditIndex" type="hidden">
+            <button id="userSubmitButton" class="button primary full" type="submit">Guardar usuario</button>
+            <button id="userCancelEdit" class="button secondary full hidden" type="button">Cancelar edicion</button>
+          </form>
+          <div id="userList" class="user-grid" aria-live="polite"></div>
+        </div>
+
+        <div class="section-heading">
+          <p class="eyebrow">Inventario</p>
+          <h2>Compras de cursos</h2>
+          <p>Registro local de alumnos que marcaron una compra desde la pagina de cursos.</p>
+        </div>
+        <div id="purchaseInventory" class="inventory-grid" aria-live="polite"></div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <strong>JRUnlock&amp;Repairs</strong>
+      <span>Panel privado de cursos.</span>
+      <a href="index.html">Volver a la pagina</a>
+    </footer>
+
+    <script src="https://www.gstatic.com/firebasejs/12.14.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/12.14.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/12.14.0/firebase-storage-compat.js"></script>
+    <script src="firebase-config.js"></script>
+    <script src="firebase-database.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>
