@@ -3,193 +3,91 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="JRUnlock&Repairs - clases de reparacion de PC y celulares, cursos, certificados y venta de capacitaciones.">
+    <meta name="description" content="JRUnlock&Repairs - cursos de reparacion de celulares, mantenimiento de PC, certificados y venta por WhatsApp.">
     <title>JRUnlock&amp;Repairs</title>
     <link rel="stylesheet" href="styles.css">
   </head>
   <body>
     <header class="topbar">
-      <a class="brand" href="#inicio" aria-label="JRUnlock&Repairs inicio">
+      <a class="brand" href="index.html" aria-label="JRUnlock&Repairs inicio">
         <span class="brand-mark">JR</span>
         <span>JRUnlock&amp;Repairs</span>
       </a>
       <nav class="nav" aria-label="Navegacion principal">
-        <a href="#cursos">Cursos</a>
-        <a href="#perfil">Perfil</a>
-        <a href="#certificados">Certificados</a>
-        <a href="#publicar">GitHub gratis</a>
+        <a href="aprendizaje.html">Aprendizaje</a>
+        <a href="cursos.html">Cursos</a>
+        <a href="acceso.html">Perfil</a>
+        <a id="tasksNavLink" class="hidden" href="tareas.html">Tareas</a>
+        <a href="certificados.html">Certificados</a>
+        <a id="adminNavLink" class="hidden" href="admin.html">Admin</a>
       </nav>
       <a class="whatsapp" href="https://wa.me/19392063234" target="_blank" rel="noreferrer">WhatsApp</a>
     </header>
 
     <main>
       <section class="hero" id="inicio">
-        <img class="hero-image" src="assets/repair-hero.svg" alt="Mesa de trabajo para reparacion de computadoras y celulares">
-        <div class="hero-content">
-          <p class="eyebrow">Academia tecnica online</p>
-          <h1>JRUnlock&amp;Repairs</h1>
-          <p>Clases de reparacion de PC y celulares, cursos editables, perfiles de alumnos e instructores, certificados imprimibles y venta por WhatsApp.</p>
+        <div class="hero-copy">
+          <p class="eyebrow">Certificado profesional JRUnlock&amp;Repairs</p>
+          <h1>Reparacion de celulares y mantenimiento de PC</h1>
+          <p>Capacitacion practica para diagnosticar fallas, reparar equipos, aplicar software y entregar servicios tecnicos con mas confianza.</p>
           <div class="hero-actions">
-            <a class="button primary" href="#login">Entrar o registrarme</a>
-            <a class="button ghost" href="#tienda">Ver cursos</a>
+            <a class="button primary" href="cursos.html">Inscribirme</a>
+            <a class="button secondary" href="aprendizaje.html">Ver lo que aprenderas</a>
+          </div>
+          <div class="hero-badges" aria-label="Beneficios">
+            <span>Clases practicas</span>
+            <span>Certificado imprimible</span>
+            <span>Soporte por WhatsApp</span>
           </div>
         </div>
+        <aside class="hero-card" aria-label="Resumen del programa">
+          <img src="assets/repair-hero.svg" alt="Mesa de trabajo para reparacion tecnica">
+          <div class="hero-card-body">
+            <span class="pill">Programa tecnico</span>
+            <h2>JRUnlock&amp;Repairs</h2>
+            <p>Empieza desde cero y avanza por modulos de reparacion real.</p>
+            <a class="button primary full" href="https://wa.me/19392063234" target="_blank" rel="noreferrer">Consultar por WhatsApp</a>
+          </div>
+        </aside>
       </section>
 
       <section class="dashboard-band" aria-label="Panel principal">
         <div class="stat">
           <strong id="courseCount">0</strong>
-          <span>Cursos activos</span>
+          <span>Cursos / modulos activos</span>
         </div>
         <div class="stat">
-          <strong id="studentCount">0</strong>
-          <span>Perfiles creados</span>
+          <strong>Principiante</strong>
+          <span>Nivel recomendado</span>
         </div>
         <div class="stat">
-          <strong>939-206-3234</strong>
-          <span>Ventas por WhatsApp</span>
+          <strong>Certificado</strong>
+          <span>Al completar curso</span>
         </div>
       </section>
 
-      <section class="workspace" id="login">
-        <div class="panel login-panel">
-          <div class="section-heading compact">
-            <p class="eyebrow">Acceso</p>
-            <h2>Login y perfiles</h2>
-          </div>
-          <form id="loginForm" class="form">
-            <label>
-              Nombre
-              <input id="nameInput" type="text" placeholder="Ej. Juan Perez" required>
-            </label>
-            <label>
-              Correo
-              <input id="emailInput" type="email" placeholder="correo@ejemplo.com" required>
-            </label>
-            <label>
-              Tipo de perfil
-              <select id="roleInput">
-                <option value="Alumno">Alumno</option>
-                <option value="Instructor">Instructor</option>
-                <option value="Administrador">Administrador</option>
-              </select>
-            </label>
-            <button class="button primary full" type="submit">Crear perfil / entrar</button>
-          </form>
-        </div>
-
-        <div class="panel profile-panel" id="perfil">
-          <div class="section-heading compact">
-            <p class="eyebrow">Mi cuenta</p>
-            <h2>Perfil activo</h2>
-          </div>
-          <div id="profileEmpty" class="empty">Crea un perfil para ver tus cursos, certificados y compras.</div>
-          <div id="profileCard" class="profile-card hidden">
-            <div class="avatar" id="profileInitials">JR</div>
-            <div>
-              <h3 id="profileName">Nombre</h3>
-              <p id="profileEmail">correo@ejemplo.com</p>
-              <span id="profileRole" class="pill">Alumno</span>
-            </div>
-          </div>
-          <button id="logoutButton" class="button secondary hidden" type="button">Cerrar sesion</button>
-        </div>
-      </section>
-
-      <section class="section" id="cursos">
-        <div class="section-heading">
-          <p class="eyebrow">Academia</p>
-          <h2>Subir y administrar cursos</h2>
-          <p>Agrega cursos desde el navegador. Los datos quedan guardados en esta computadora para editar la pagina antes de publicarla.</p>
-        </div>
-        <div class="course-admin">
-          <form id="courseForm" class="form panel">
-            <label>
-              Titulo del curso
-              <input id="courseTitle" type="text" placeholder="Reparacion de celulares desde cero" required>
-            </label>
-            <label>
-              Categoria
-              <select id="courseCategory">
-                <option>Celulares</option>
-                <option>Computadoras PC</option>
-                <option>Unlock y software</option>
-                <option>Microsoldadura</option>
-              </select>
-            </label>
-            <label>
-              Precio
-              <input id="coursePrice" type="text" placeholder="Gratis / 49 USD / 350 Bs" required>
-            </label>
-            <label>
-              Link del curso o video
-              <input id="courseLink" type="url" placeholder="https://...">
-            </label>
-            <label>
-              Descripcion
-              <textarea id="courseDescription" rows="4" placeholder="Que aprendera el alumno..." required></textarea>
-            </label>
-            <button class="button primary full" type="submit">Subir curso</button>
-          </form>
-          <div id="courseList" class="course-grid" aria-live="polite"></div>
-        </div>
-      </section>
-
-      <section class="section split" id="certificados">
-        <div>
-          <div class="section-heading left">
-            <p class="eyebrow">Constancia</p>
-            <h2>Certificados imprimibles</h2>
-            <p>Genera un certificado con el nombre del alumno y el curso. Puedes imprimirlo o guardarlo como PDF desde el navegador.</p>
-          </div>
-          <form id="certificateForm" class="form panel">
-            <label>
-              Nombre del alumno
-              <input id="certificateName" type="text" placeholder="Nombre completo" required>
-            </label>
-            <label>
-              Curso completado
-              <input id="certificateCourse" type="text" placeholder="Reparacion de PC nivel basico" required>
-            </label>
-            <button class="button primary" type="submit">Generar certificado</button>
-            <button id="printCertificate" class="button secondary" type="button">Imprimir / PDF</button>
-          </form>
-        </div>
-        <article class="certificate" id="certificatePreview">
-          <p>Certificado de finalizacion</p>
-          <h3 id="certName">Nombre del alumno</h3>
-          <span>ha completado satisfactoriamente</span>
-          <h4 id="certCourse">Curso de JRUnlock&amp;Repairs</h4>
-          <div class="certificate-footer">
-            <strong>JRUnlock&amp;Repairs</strong>
-            <small id="certDate">Fecha</small>
-          </div>
-        </article>
-      </section>
-
-      <section class="section" id="tienda">
-        <div class="section-heading">
-          <p class="eyebrow">Ventas</p>
-          <h2>Tienda de cursos</h2>
-          <p>Los botones preparan el mensaje de compra directo a WhatsApp. Cambia precios y textos en la pagina cuando quieras.</p>
-        </div>
-        <div id="shopList" class="shop-grid"></div>
-      </section>
-
-      <section class="section github" id="publicar">
+      <section class="section process">
         <div class="section-heading left">
-          <p class="eyebrow">Publicacion gratis</p>
-          <h2>Subir a GitHub Pages paso por paso</h2>
+          <p class="eyebrow">Como funciona</p>
+          <h2>De la inscripcion al certificado</h2>
         </div>
-        <ol class="steps">
-          <li>Crea una cuenta gratis en <a href="https://github.com" target="_blank" rel="noreferrer">github.com</a>.</li>
-          <li>Crea un repositorio nuevo con el nombre que quieras, por ejemplo <strong>jrunlock-repairs</strong>.</li>
-          <li>Sube estos archivos: <strong>index.html</strong>, <strong>styles.css</strong>, <strong>app.js</strong>, <strong>README.md</strong> y la carpeta <strong>assets</strong>.</li>
-          <li>En GitHub entra a <strong>Settings</strong>, luego <strong>Pages</strong>.</li>
-          <li>En <strong>Build and deployment</strong> elige <strong>Deploy from a branch</strong>.</li>
-          <li>Selecciona la rama <strong>main</strong> y carpeta <strong>/root</strong>, luego guarda.</li>
-          <li>Espera unos minutos y GitHub mostrara el enlace publico de tu pagina.</li>
-        </ol>
+        <div class="process-grid">
+          <div class="process-step">
+            <strong>1</strong>
+            <h3>Compra o consulta</h3>
+            <p>El boton de WhatsApp abre el mensaje listo para preguntar por el curso.</p>
+          </div>
+          <div class="process-step">
+            <strong>2</strong>
+            <h3>Entra con tu perfil</h3>
+            <p>Registra tu nombre para que el certificado salga con tus datos.</p>
+          </div>
+          <div class="process-step">
+            <strong>3</strong>
+            <h3>Completa el curso</h3>
+            <p>Marca el curso como completado y el certificado se genera automaticamente.</p>
+          </div>
+        </div>
       </section>
     </main>
 
